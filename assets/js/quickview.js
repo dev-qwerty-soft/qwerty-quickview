@@ -84,8 +84,12 @@ jQuery(function ($) {
             .replace(/\b\w/g, l => l.toUpperCase());
     }
 
+    let qqvSelectedAttributes = {};
+
     $(document).on('click', '.qqv-btn', function (e) {
         e.preventDefault();
+
+        qqvSelectedAttributes = {};
 
         var $btn = $(this);
         var productId = $btn.data('product-id');
@@ -114,6 +118,11 @@ jQuery(function ($) {
 
                     $('#qqv-modal').attr('data-product-id', response.data.product_id);
                     $('#qqv-modal').attr('data-product-type', response.data.type);
+
+                    window.qqvState = {
+                        productId: response.data.product_id,
+                        variations: response.data.variations
+                    };
 
                     // Stock
                     $('#qqv-modal .qqv-product__stock')
@@ -174,9 +183,10 @@ jQuery(function ($) {
                     if (response.data.type === 'variable') {
                         window.qqvVariations = response.data.variations;
                         renderVariations(response.data.attributes, response.data.swatches);
-                        $('.qqv-add-to-cart').prop('disabled', true);
+                        // $('.qqv-add-to-cart').prop('disabled', true);
                     } else {
                         $('.qqv-variations').html('');
+                        $('.qqv-add-to-cart').prop('disabled', false);
                     }
 
                     console.log('Product Data:', response.data);
@@ -240,51 +250,141 @@ jQuery(function ($) {
         }
     });
 
+    // Choose variation
+
+    $(document).on('click', '.qqv-option', function () {
+        const $btn = $(this);
+        const attr = $btn.data('attribute');
+        const value = $btn.data('value');
+
+        qqvSelectedAttributes[attr] = value;
+
+        $btn
+            .closest('.qqv-attribute')
+            .find('.qqv-option')
+            .removeClass('is-active');
+
+        $btn.addClass('is-active');
+
+        console.log('Selected:', qqvSelectedAttributes);
+    });
+
+
+    // Find matching variation
+    function findVariation(variations, selected) {
+        return variations.find(v => {
+            return Object.entries(selected).every(([key, value]) => {
+                const normKey = key.startsWith('attribute_') ? key : 'attribute_' + key;
+
+                return v.attributes[normKey] === value;
+            });
+        });
+    }
+
+    function normalizeVariation(selected) {
+        const out = {};
+
+        Object.entries(selected).forEach(([key, value]) => {
+            const normKey = key.startsWith('attribute_')
+                ? key
+                : 'attribute_' + key;
+
+            out[normKey] = value;
+        });
+
+        return out;
+    }
 
     // Add to Cart
     $(document).on('click', '.qqv-add-to-cart', function (e) {
-
         e.preventDefault();
-        let productId = $('#qqv-modal').data('product-id');
-        let productType = $('#qqv-modal').data('product-type');
-        const qty = $('.qqv-qty').val() || 1;
+        e.stopPropagation();
+
+        let productId = parseInt($('#qqv-modal').attr('data-product-id'));
+        let productType = $('#qqv-modal').attr('data-product-type');
+        let variations = window.qqvState.variations;
+        const qty = parseInt($('.qqv-qty').val()) || 1;
 
         let data = {
-            action: 'woocommerce_ajax_add_to_cart',
             product_id: productId,
-            quantity: qty
+            quantity: qty,
         };
 
         if (productType === 'variable') {
-            const variationId = $('.qqv-variation-id').val();
-            if (!variationId) {
-                alert('Please select options');
+            const selected = qqvSelectedAttributes;
+
+            const allAttrKeys = [...new Set(
+                variations.flatMap(v => Object.keys(v.attributes))
+            )];
+
+            const hasAll = allAttrKeys.every(normKey => {
+                const shortKey = normKey.replace('attribute_', '');
+                return selected[normKey] || selected[shortKey];
+            });
+
+            if (!hasAll) {
+                $('#qqv-modal .qqv-notice')
+                    .text('Please select all options')
+                    .show();
                 return;
             }
-            data.variation_id = variationId;
-            data.variation = getSelectedAttributes();
+
+            const match = findVariation(variations, selected);
+
+            if (!match) {
+                $('#qqv-modal .qqv-notice')
+                    .text('This combination is not available')
+                    .show();
+                return;
+            }
+
+            if (!match.is_in_stock) {
+                $('#qqv-modal .qqv-notice')
+                    .text('This variation is out of stock')
+                    .show();
+                return;
+            }
+
+            $('#qqv-modal .qqv-notice').hide();
+
+            data.variation_id = match.variation_id;
+            data.variation = normalizeVariation(selected);
         }
 
         addToCartAjax(data, $(this));
     });
 
     function addToCartAjax(data, $btn) {
-
         $btn.addClass('loading').prop('disabled', true);
+
+        const flatData = {
+            action: 'qqv_add_to_cart',
+            nonce: qqv_ajax.nonce,
+            product_id: data.product_id,
+            quantity: data.quantity,
+            variation_id: data.variation_id || 0,
+        };
+
+        Object.entries(data.variation || {}).forEach(([key, val]) => {
+            flatData[`variation[${key}]`] = val;
+        });
+
+        console.log('Cart data:', JSON.stringify(flatData));
 
         $.ajax({
             type: 'POST',
-            url: '/?wc-ajax=add_to_cart',
-            data: data,
-
+            url: qqv_ajax.url,
+            data: flatData,
             success: function (response) {
-
                 if (!response) return;
 
-                if (response.error && response.product_url) {
-                    window.location = response.product_url;
+                if (response.error) {
+                    $('#qqv-modal .qqv-notice')
+                        .text('Could not add to cart. Please try again.')
+                        .show();
                     return;
                 }
+
                 $(document.body).trigger('added_to_cart', [
                     response.fragments,
                     response.cart_hash,
@@ -292,6 +392,7 @@ jQuery(function ($) {
                 ]);
             },
             complete: function () {
+                $('#qqv-modal').fadeOut(200);
                 $btn.removeClass('loading').prop('disabled', false);
             }
         });
