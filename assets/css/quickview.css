@@ -3,13 +3,19 @@
     --font-secondary: 'MerriweatherSans', serif;
 }
 
-
+/* Product */
 .product.type-product:hover .qqv-btn {
     bottom: 10px;
 }
 
-.product.type-product{
+.product.type-product {
     overflow: hidden;
+}
+
+@media screen and (max-width: 992px) {
+    .product.type-product .qqv-btn {
+        display: none;
+    }
 }
 
 /* Button */
@@ -32,7 +38,7 @@
     transition: 0.3s ease;
 }
 
-.qqv-btn:hover{
+.qqv-btn:hover {
     background-color: #330072;
     color: #fff;
 }
