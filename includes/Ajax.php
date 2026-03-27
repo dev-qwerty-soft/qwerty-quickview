@@ -89,6 +89,7 @@ class Ajax
         }
 
         wp_send_json_success([
+            'product_id' => $product->get_id(),
             'type' => $type,
 
             'title' => $product->get_name(),
@@ -107,7 +108,6 @@ class Ajax
             'additional_text' => get_post_meta($product->get_id(), '_qv_additional_text', true),
             'characteristics' => get_post_meta($product->get_id(), '_qv_characteristics', true),
 
-            'type' => $type,
             'attributes' => $attributes,
             'variations' => $variations,
             'default_attributes' => $default_attributes,

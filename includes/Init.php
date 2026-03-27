@@ -67,7 +67,7 @@ class Init
                                         <path d="M3.8457 10L16.1534 10" stroke="#1C2230" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                 </button>
-                                <input type="number" class="qqv-quantity__input" value="1" min="1">
+                                <input type="number" class="qqv-quantity__input qqv-qty" value="1" min="1">
                                 <button class="qqv-quantity__plus">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                         <path d="M9.99955 16.1534L9.99955 9.99955M9.99955 9.99955L9.99955 3.8457M9.99955 9.99955L16.1534 9.99955M9.99955 9.99955L3.8457 9.99955" stroke="#1C2230" stroke-width="1.5" stroke-linecap="round" />

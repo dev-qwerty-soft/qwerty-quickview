@@ -112,6 +112,9 @@ jQuery(function ($) {
                     $('#qqv-modal .qqv-modal__content-link').attr('href', response.data.permalink);
                     $('#qqv-modal .qqv-product__price').html(response.data.price);
 
+                    $('#qqv-modal').attr('data-product-id', response.data.product_id);
+                    $('#qqv-modal').attr('data-product-type', response.data.type);
+
                     // Stock
                     $('#qqv-modal .qqv-product__stock')
                         .removeClass('in-stock last-stock sold-out-stock')
@@ -236,4 +239,61 @@ jQuery(function ($) {
             $input.val(val - 1).change();
         }
     });
+
+
+    // Add to Cart
+    $(document).on('click', '.qqv-add-to-cart', function (e) {
+
+        e.preventDefault();
+        let productId = $('#qqv-modal').data('product-id');
+        let productType = $('#qqv-modal').data('product-type');
+        const qty = $('.qqv-qty').val() || 1;
+
+        let data = {
+            action: 'woocommerce_ajax_add_to_cart',
+            product_id: productId,
+            quantity: qty
+        };
+
+        if (productType === 'variable') {
+            const variationId = $('.qqv-variation-id').val();
+            if (!variationId) {
+                alert('Please select options');
+                return;
+            }
+            data.variation_id = variationId;
+            data.variation = getSelectedAttributes();
+        }
+
+        addToCartAjax(data, $(this));
+    });
+
+    function addToCartAjax(data, $btn) {
+
+        $btn.addClass('loading').prop('disabled', true);
+
+        $.ajax({
+            type: 'POST',
+            url: '/?wc-ajax=add_to_cart',
+            data: data,
+
+            success: function (response) {
+
+                if (!response) return;
+
+                if (response.error && response.product_url) {
+                    window.location = response.product_url;
+                    return;
+                }
+                $(document.body).trigger('added_to_cart', [
+                    response.fragments,
+                    response.cart_hash,
+                    $btn
+                ]);
+            },
+            complete: function () {
+                $btn.removeClass('loading').prop('disabled', false);
+            }
+        });
+    }
 });
