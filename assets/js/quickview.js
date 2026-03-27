@@ -183,7 +183,7 @@ jQuery(function ($) {
                     if (response.data.type === 'variable') {
                         window.qqvVariations = response.data.variations;
                         renderVariations(response.data.attributes, response.data.swatches);
-                        // $('.qqv-add-to-cart').prop('disabled', true);
+                        $('.qqv-add-to-cart').prop('disabled', true);
                     } else {
                         $('.qqv-variations').html('');
                         $('.qqv-add-to-cart').prop('disabled', false);
@@ -259,14 +259,26 @@ jQuery(function ($) {
 
         qqvSelectedAttributes[attr] = value;
 
-        $btn
-            .closest('.qqv-attribute')
-            .find('.qqv-option')
-            .removeClass('is-active');
-
+        $btn.closest('.qqv-attribute').find('.qqv-option').removeClass('is-active');
         $btn.addClass('is-active');
 
-        console.log('Selected:', qqvSelectedAttributes);
+        $('#qqv-modal .qqv-notice').hide();
+
+        const allAttrKeys = [...new Set(
+            window.qqvState.variations.flatMap(v => Object.keys(v.attributes))
+        )];
+
+        const hasAll = allAttrKeys.every(normKey => {
+            const shortKey = normKey.replace('attribute_', '');
+            return qqvSelectedAttributes[normKey] || qqvSelectedAttributes[shortKey];
+        });
+
+        $('.qqv-add-to-cart').prop('disabled', !hasAll);
+
+        const match = findVariation(window.qqvState.variations, qqvSelectedAttributes);
+        if (match && match.price_html) {
+            $('#qqv-modal .qqv-product__price').html(match.price_html);
+        }
     });
 
 
