@@ -1,6 +1,13 @@
 :root {
     --font-primary: 'Merriweather', sans-serif;
     --font-secondary: 'MerriweatherSans', serif;
+
+    /* Colors */
+    --color-primary: #330072;
+    --color-secondary: #6D488F;
+    --color-tertiary: #F2F5FA;
+    --color-white: #fff;
+    --color-black: #000;
 }
 
 /* Product */
@@ -21,7 +28,7 @@
 /* Button */
 .qqv-btn {
     position: absolute;
-    background-color: #fff;
+    background-color: var(--color-white);
     color: #000;
     border: none;
     bottom: -100px;
@@ -39,8 +46,8 @@
 }
 
 .qqv-btn:hover {
-    background-color: #330072;
-    color: #fff;
+    background-color: var(--color-primary);
+    color: var(--color-white);
 }
 
 .qqv-btn.is-loading {
@@ -97,7 +104,7 @@
     position: relative;
     max-width: 1228px;
     margin: 54px auto;
-    background: #fff;
+    background: var(--color-white);
     overflow-y: auto;
     padding: 24px;
     z-index: 10;
@@ -129,7 +136,7 @@
     font-size: 16px;
     line-height: 20px;
     gap: 8px;
-    color: #6D488F;
+    color: var(--color-secondary);
     font-family: var(--font-secondary);
 }
 
@@ -146,7 +153,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #F2F5FA;
+    background-color: var(--color-tertiary);
 }
 
 /* Product */
@@ -175,7 +182,7 @@
 
 .qqv-product__stock {
     padding: 4px 12px;
-    background-color: #F2F5FA;
+    background-color: var(--color-tertiary);
     color: #000;
     text-transform: uppercase;
     font-size: 12px;
@@ -268,9 +275,9 @@
 }
 
 .qqv-option:not(.qqv-option--color).is-active {
-    background-color: #330072;
-    border-color: #330072;
-    color: #fff;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-white);
 }
 
 .qqv-attribute[data-attribute="pa_size"] .qqv-option {
@@ -292,7 +299,7 @@
 }
 
 .qqv-option--color.is-active {
-    border-color: #330072;
+    border-color: var(--color-primary);
 }
 
 .qqv-option--color span {
@@ -356,9 +363,9 @@
     line-height: 20px !important;
     padding: 4px 4px 4px 20px !important;
     border-radius: 30px !important;
-    background-color: #330072 !important;
+    background-color: var(--color-primary) !important;
     width: 100% !important;
-    color: #fff !important;
+    color: var(--color-white) !important;
     transition: 0.3s ease !important;
     font-family: var(--font-secondary) !important;
 }
@@ -375,7 +382,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
+    background-color: var(--color-white);
     border-radius: 50%;
 }
 
@@ -394,7 +401,7 @@
     bottom: 20px;
     right: 20px;
     transform: translateY(-50%);
-    background: #fff;
+    background: var(--color-white);
     border: none;
     width: 52px;
     height: 52px;
