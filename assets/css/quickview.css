@@ -216,6 +216,10 @@
 .qqv-product__details {
     max-width: 450px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
 }
 
 .qqv-product__details-top {
@@ -229,6 +233,10 @@
     align-items: center;
     margin-top: 16px;
     gap: 16px;
+}
+
+.qqv-product__cart .wc-forward{
+    display: none;
 }
 
 .qqv-product__additional {
@@ -272,7 +280,7 @@
     text-align: center;
     border: 1px solid #DFE3E9;
     transition: 0.3s ease;
-    font-family: var(--font-secondary);
+    font-family: var(--font-primary);
     cursor: pointer;
 }
 
