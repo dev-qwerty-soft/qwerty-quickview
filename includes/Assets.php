@@ -17,7 +17,7 @@ class Assets
         // CSS
         wp_enqueue_style(
             'qqv-style',
-            plugin_dir_url(__DIR__) . 'assets/css/quickview.css',
+            plugin_dir_url(__DIR__) . 'dist/css/styles.css',
             [],
             '1.0.0'
         );
@@ -32,7 +32,7 @@ class Assets
         // JS
         wp_enqueue_script(
             'qqv-script',
-            plugin_dir_url(__DIR__) . 'assets/js/quickview.js',
+            plugin_dir_url(__DIR__) . 'dist/js/popup.js',
             ['jquery'],
             '1.0.0',
             true

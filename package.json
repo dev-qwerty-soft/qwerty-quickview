@@ -1,0 +1,28 @@
+{
+  "name": "my-woocommerce-popup-plugin",
+  "version": "1.0.0",
+  "description": "WooCommerce frontend popup plugin",
+  "scripts": {
+    "start": "webpack --mode=development --watch",
+    "dev": "webpack --mode=development --watch",
+    "build": "webpack --mode=production"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.0",
+    "@babel/preset-env": "^7.22.0",
+    "babel-loader": "^9.1.0",
+    "css-loader": "^6.8.0",
+    "css-minimizer-webpack-plugin": "^5.0.0",
+    "mini-css-extract-plugin": "^2.7.0",
+    "sass": "^1.63.0",
+    "sass-loader": "^13.3.0",
+    "terser-webpack-plugin": "^5.3.0",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

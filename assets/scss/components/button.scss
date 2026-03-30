@@ -1,0 +1,39 @@
+/* Button */
+.qqv-btn {
+    position: absolute;
+    background-color: var(--color-white);
+    color: #000;
+    border: none;
+    bottom: get-d(-100px);
+    left: get-d(10px);
+    right: get-d(10px);
+    padding: get-d(10px);
+    cursor: pointer;
+    width: calc(100% - get-d(20px));
+    z-index: 10;
+    font-size: get-d(14px);
+    line-height: get-d(20px);
+    font-weight: 700;
+    font-family: var(--font-primary);
+    transition: 0.3s ease;
+
+    @include respond(lg) {
+        bottom: get-lg(-100px);
+        left: get-lg(10px);
+        right: get-lg(10px);
+        padding: get-lg(10px);
+        width: calc(100% - get-lg(20px));
+        font-size: get-lg(14px);
+        line-height: get-lg(20px);
+    }
+
+    &:hover {
+        background-color: var(--color-primary);
+        color: var(--color-white);
+    }
+
+    &.is-loading {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+}

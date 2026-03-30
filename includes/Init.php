@@ -25,7 +25,7 @@ class Init
     public function render_modal()
     {
 ?>
-        <div id="qqv-modal" style="display:none;">
+        <div class="qqv-modal" id="qqv-modal" style="display:none;">
             <div class="qqv-modal__overlay"></div>
             <div class="qqv-modal__content">
                 <div class="qqv-modal__content-top">

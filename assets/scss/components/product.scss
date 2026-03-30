@@ -1,0 +1,22 @@
+/* Product */
+.product.type-product:hover .qqv-btn {
+    bottom: get-d(10px);
+
+    @include respond(lg){
+        bottom: get-lg(10px);
+    }
+
+    @include respond(md){
+        bottom: 10px;
+    }
+}
+
+.product.type-product {
+    overflow: hidden;
+}
+
+@media screen and (max-width: 992px) {
+    .product.type-product .qqv-btn {
+        display: none;
+    }
+}

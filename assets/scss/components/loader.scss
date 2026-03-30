@@ -1,0 +1,21 @@
+/* loader */
+.qqv-loader {
+    width: get-d(16px);
+    height: get-d(16px);
+    border: 2px solid #000;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    display: inline-block;
+    animation: qqv-spin 0.6s linear infinite;
+
+    @include respond(lg) {
+        width: get-lg(16px);
+        height: get-lg(16px);
+    }
+}
+
+@keyframes qqv-spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,81 @@
+:root {
+    --font-primary: 'Merriweather', sans-serif;
+    --font-secondary: 'MerriweatherSans', serif;
+
+    /* Colors */
+    --color-primary: #330072;
+    --color-secondary: #6D488F;
+    --color-tertiary: #F2F5FA;
+    --color-white: #fff;
+    --color-black: #000;
+}
+
+// Mixins
+@mixin respond($breakpoint) {
+    @if $breakpoint==xs {
+        @media (max-width: 480px) {
+            @content;
+        }
+    }
+
+    @if $breakpoint==sm {
+        @media (max-width: 640px) {
+            @content;
+        }
+    }
+
+    @if $breakpoint==md {
+        @media (max-width: 768px) {
+            @content;
+        }
+    }
+
+    @if $breakpoint==lg {
+        @media (max-width: 1024px) {
+            @content;
+        }
+    }
+
+    @if $breakpoint==xl {
+        @media (max-width: 1280px) {
+            @content;
+        }
+    }
+
+    @if $breakpoint==2xl {
+        @media (min-width: 1536px) {
+            @content;
+        }
+    }
+}
+
+
+@function get-d($target) {
+    $vw-context: calc((1440 * 0.01) * 1px);
+    @return calc(($target / $vw-context) * 1vw);
+}
+
+@function get-xl($target) {
+    $vw-context: calc((1280 * 0.01) * 1px);
+    @return calc(($target / $vw-context) * 1vw);
+}
+
+@function get-lg($target) {
+    $vw-context: calc((1024 * 0.01) * 1px);
+    @return calc(($target / $vw-context) * 1vw);
+}
+
+@function get-md($target) {
+    $vw-context: calc((768 * 0.01) * 1px);
+    @return calc(($target / $vw-context) * 1vw);
+}
+
+@function get-sm($target) {
+    $vw-context: calc((640 * 0.01) * 1px);
+    @return calc(($target / $vw-context) * 1vw);
+}
+
+@function get-xs($target) {
+    $vw-context: calc((480 * 0.01) * 1px);
+    @return calc(($target / $vw-context) * 1vw);
+}

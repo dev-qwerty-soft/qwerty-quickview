@@ -6,6 +6,7 @@
  * Author:      QWERTY Soft
  * Author URI:  https://qwerty-soft.com/
  * Text Domain: qwerty-quickview
+ * Requires Plugins: woocommerce, woo-variation-swatches
  */
 
 if (!defined('ABSPATH')) exit;
