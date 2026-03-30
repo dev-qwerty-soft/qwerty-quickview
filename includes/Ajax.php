@@ -11,6 +11,9 @@ class Ajax
     {
         add_action('wp_ajax_qqv_get', [$this, 'get_product']);
         add_action('wp_ajax_nopriv_qqv_get', [$this, 'get_product']);
+
+        add_action('wp_ajax_qqv_add_to_cart', [$this, 'add_to_cart']);
+        add_action('wp_ajax_nopriv_qqv_add_to_cart', [$this, 'add_to_cart']);
     }
 
     public function get_product()
@@ -89,6 +92,7 @@ class Ajax
         }
 
         wp_send_json_success([
+            'product_id' => $product->get_id(),
             'type' => $type,
 
             'title' => $product->get_name(),
@@ -107,11 +111,57 @@ class Ajax
             'additional_text' => get_post_meta($product->get_id(), '_qv_additional_text', true),
             'characteristics' => get_post_meta($product->get_id(), '_qv_characteristics', true),
 
-            'type' => $type,
             'attributes' => $attributes,
             'variations' => $variations,
             'default_attributes' => $default_attributes,
             'swatches' => $swatches,
+        ]);
+    }
+
+    public function add_to_cart()
+    {
+        check_ajax_referer('qqv_add_to_cart', 'nonce');
+
+        $product_id   = intval($_POST['product_id'] ?? 0);
+        $variation_id = intval($_POST['variation_id'] ?? 0);
+        $quantity     = max(1, intval($_POST['quantity'] ?? 1));
+        $variation    = [];
+        
+        if (!empty($_POST['variation'])) {
+            if (is_array($_POST['variation'])) {
+                $variation = array_map('sanitize_text_field', wp_unslash($_POST['variation']));
+            } elseif (is_string($_POST['variation'])) {
+                $decoded = json_decode(stripslashes($_POST['variation']), true);
+                if (is_array($decoded)) {
+                    $variation = array_map('sanitize_text_field', $decoded);
+                }
+            }
+        }
+
+        if (!$product_id) {
+            wp_send_json_error(['message' => 'No product ID']);
+        }
+
+        $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity, $variation_id, $variation);
+
+        if (!$cart_item_key) {
+            wp_send_json_error(['message' => 'Could not add to cart']);
+        }
+
+        WC()->cart->calculate_totals();
+
+        ob_start();
+        woocommerce_mini_cart();
+        $mini_cart = ob_get_clean();
+
+        $fragments = apply_filters('woocommerce_add_to_cart_fragments', [
+            'div.widget_shopping_cart_content' => '<div class="widget_shopping_cart_content">' . $mini_cart . '</div>',
+        ]);
+
+        wp_send_json([
+            'error'     => false,
+            'fragments' => $fragments,
+            'cart_hash' => WC()->cart->get_cart_hash(),
         ]);
     }
 }

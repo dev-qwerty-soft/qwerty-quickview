@@ -47,8 +47,8 @@ class Assets
         );
 
         wp_localize_script('qqv-script', 'qqv_ajax', [
-            'url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('qqv_nonce')
+            'url'   => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('qqv_add_to_cart'),
         ]);
     }
 }

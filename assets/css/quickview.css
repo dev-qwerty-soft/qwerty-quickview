@@ -1,10 +1,37 @@
+:root {
+    --font-primary: 'Merriweather', sans-serif;
+    --font-secondary: 'MerriweatherSans', serif;
+
+    /* Colors */
+    --color-primary: #330072;
+    --color-secondary: #6D488F;
+    --color-tertiary: #F2F5FA;
+    --color-white: #fff;
+    --color-black: #000;
+}
+
+/* Product */
+.product.type-product:hover .qqv-btn {
+    bottom: 10px;
+}
+
+.product.type-product {
+    overflow: hidden;
+}
+
+@media screen and (max-width: 992px) {
+    .product.type-product .qqv-btn {
+        display: none;
+    }
+}
+
 /* Button */
 .qqv-btn {
     position: absolute;
-    background-color: #fff;
+    background-color: var(--color-white);
     color: #000;
     border: none;
-    bottom: 10px;
+    bottom: -100px;
     left: 10px;
     right: 10px;
     padding: 10px;
@@ -13,6 +40,14 @@
     z-index: 10;
     font-size: 14px;
     line-height: 20px;
+    font-weight: 700;
+    font-family: var(--font-primary);
+    transition: 0.3s ease;
+}
+
+.qqv-btn:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
 }
 
 .qqv-btn.is-loading {
@@ -46,6 +81,7 @@
     height: 100%;
     display: none;
     z-index: 9999;
+    font-family: var(--font-primary);
 }
 
 .qqv-modal__overlay {
@@ -68,7 +104,7 @@
     position: relative;
     max-width: 1228px;
     margin: 54px auto;
-    background: #fff;
+    background: var(--color-white);
     overflow-y: auto;
     padding: 24px;
     z-index: 10;
@@ -85,6 +121,7 @@
     align-items: center;
     gap: 4px;
     text-transform: uppercase;
+    font-family: var(--font-primary);
 }
 
 .qqv-modal__content-top {
@@ -99,7 +136,8 @@
     font-size: 16px;
     line-height: 20px;
     gap: 8px;
-    color: #6D488F;
+    color: var(--color-secondary);
+    font-family: var(--font-secondary);
 }
 
 .qqv-modal__content-link svg {
@@ -115,7 +153,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #F2F5FA;
+    background-color: var(--color-tertiary);
 }
 
 /* Product */
@@ -125,12 +163,14 @@
     font-weight: 400;
     font-size: 40px;
     line-height: 48px;
+    font-family: var(--font-primary);
 }
 
 .qqv-product__sku {
     text-transform: uppercase;
     font-size: 16px;
     line-height: 20px;
+    font-family: var(--font-primary);
 }
 
 .qqv-product__price {
@@ -142,7 +182,7 @@
 
 .qqv-product__stock {
     padding: 4px 12px;
-    background-color: #F2F5FA;
+    background-color: var(--color-tertiary);
     color: #000;
     text-transform: uppercase;
     font-size: 12px;
@@ -231,9 +271,23 @@
     text-transform: uppercase;
     text-align: center;
     border: 1px solid #DFE3E9;
+    transition: 0.3s ease;
+    font-family: var(--font-secondary);
+    cursor: pointer;
 }
 
-.qqv-attribute[data-attribute="pa_size"] .qqv-option{
+.qqv-option.is-unavailable{
+    text-decoration: line-through;
+    color: #999EAD;
+}
+
+.qqv-option:not(.qqv-option--color).is-active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.qqv-attribute[data-attribute="pa_size"] .qqv-option {
     width: 100%;
 }
 
@@ -248,6 +302,11 @@
     margin-right: 10px;
     position: relative;
     padding: 4px;
+    transition: 0.3s ease;
+}
+
+.qqv-option--color.is-active {
+    border-color: var(--color-primary);
 }
 
 .qqv-option--color span {
@@ -293,6 +352,7 @@
     padding: 0;
     margin: 0;
     -moz-appearance: textfield;
+    font-family: var(--font-secondary);
 }
 
 .qqv-quantity input::-webkit-outer-spin-button,
@@ -303,16 +363,24 @@
 
 /* qqv-add-to-cart */
 .qqv-add-to-cart {
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: space-between;
-    font-size: 14px;
-    line-height: 20px;
-    padding: 4px 4px 4px 20px;
-    border-radius: 30px;
-    background-color: #330072;
-    width: 100%;
-    color: #fff;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    padding: 4px 4px 4px 20px !important;
+    border-radius: 30px !important;
+    background-color: var(--color-primary) !important;
+    width: 100% !important;
+    color: var(--color-white) !important;
+    transition: 0.3s ease !important;
+    font-family: var(--font-secondary) !important;
+}
+
+.qqv-add-to-cart[disabled] {
+    background-color: #A9A9A9 !important;
+    cursor: not-allowed !important;
+    opacity: 0.7 !important;
 }
 
 .qqv-add-to-cart span {
@@ -321,7 +389,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #fff;
+    background-color: var(--color-white);
     border-radius: 50%;
 }
 
@@ -340,7 +408,7 @@
     bottom: 20px;
     right: 20px;
     transform: translateY(-50%);
-    background: #fff;
+    background: var(--color-white);
     border: none;
     width: 52px;
     height: 52px;
@@ -379,6 +447,7 @@
     font-weight: 700;
     font-size: 14px;
     line-height: 20px;
+    font-family: var(--font-primary);
 }
 
 .qqv-accordion__header svg {
@@ -393,6 +462,7 @@
     line-height: 25px;
     font-weight: 300;
     color: #464955;
+    font-family: var(--font-secondary);
 }
 
 .qqv-accordion__item {
