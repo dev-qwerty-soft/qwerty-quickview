@@ -272,6 +272,13 @@
     text-align: center;
     border: 1px solid #DFE3E9;
     transition: 0.3s ease;
+    font-family: var(--font-secondary);
+    cursor: pointer;
+}
+
+.qqv-option.is-unavailable{
+    text-decoration: line-through;
+    color: #999EAD;
 }
 
 .qqv-option:not(.qqv-option--color).is-active {

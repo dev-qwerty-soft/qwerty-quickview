@@ -43,7 +43,6 @@ jQuery(function ($) {
                     </button>
                 `;
                 } else {
-
                     html += `
                     <button 
                         type="button"
@@ -58,6 +57,9 @@ jQuery(function ($) {
             html += `</div></div>`;
         });
         $('.qqv-variations').html(html);
+
+        // Mark unavailable options on initial render (no selection yet)
+        updateOptionStates();
     }
 
     function normalizeOptions(options) {
@@ -82,6 +84,83 @@ jQuery(function ($) {
             .replace('pa_', '')
             .replace(/_/g, ' ')
             .replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    /**
+     * Normalize attribute key to always have "attribute_" prefix.
+     */
+    function normKey(key) {
+        return key.startsWith('attribute_') ? key : 'attribute_' + key;
+    }
+
+    /**
+     * Check if a given option value for a given attribute has at least one
+     * available (in_stock) variation that matches the currently selected
+     * attributes (excluding the attribute being tested).
+     *
+     * @param {string} attrName  - attribute key (with or without "attribute_" prefix)
+     * @param {string} value     - option value to test
+     * @param {Object} selected  - currently selected attributes (qqvSelectedAttributes)
+     * @param {Array}  variations - all variations from qqvState
+     * @returns {boolean}
+     */
+    function isOptionAvailable(attrName, value, selected, variations) {
+        const testKey = normKey(attrName);
+
+        return variations.some(v => {
+            // Variation must be in stock
+            if (!v.is_in_stock) return false;
+
+            // The variation must match the tested value for the tested attribute.
+            // An empty string in variation attributes means "any" (WooCommerce "Any ...")
+            const varVal = v.attributes[testKey];
+            if (varVal !== '' && varVal !== value) return false;
+
+            // The variation must also be compatible with every other already-selected attribute
+            for (const [selKey, selVal] of Object.entries(selected)) {
+                const selNorm = normKey(selKey);
+
+                // Skip the attribute we are currently testing
+                if (selNorm === testKey) continue;
+
+                const varSelVal = v.attributes[selNorm];
+                // Empty string means "any" — always compatible
+                if (varSelVal !== '' && varSelVal !== selVal) return false;
+            }
+
+            return true;
+        });
+    }
+
+    /**
+     * Walk through every rendered option button and add/remove
+     * the "is-unavailable" class based on current selection.
+     * Called after initial render and after every attribute click.
+     */
+    function updateOptionStates() {
+        if (!window.qqvState || !window.qqvState.variations) return;
+
+        const variations = window.qqvState.variations;
+        const selected = qqvSelectedAttributes;
+
+        $('.qqv-option').each(function () {
+            const $opt = $(this);
+            const attr = $opt.data('attribute');
+            const value = $opt.data('value');
+
+            const available = isOptionAvailable(attr, value, selected, variations);
+
+            $opt.toggleClass('is-unavailable', !available);
+
+            // If the option that was previously selected becomes unavailable,
+            // deselect it and remove from selected map so state stays consistent.
+            if (!available && $opt.hasClass('is-active')) {
+                $opt.removeClass('is-active');
+                const nk = normKey(attr);
+                delete selected[nk];
+                delete selected[attr];
+            }
+        });
     }
 
     let qqvSelectedAttributes = {};
@@ -182,6 +261,7 @@ jQuery(function ($) {
                     // VARIATIONS
                     if (response.data.type === 'variable') {
                         window.qqvVariations = response.data.variations;
+                        // renderVariations already calls updateOptionStates() at the end
                         renderVariations(response.data.attributes, response.data.swatches);
                         $('.qqv-add-to-cart').prop('disabled', true);
                     } else {
@@ -251,9 +331,11 @@ jQuery(function ($) {
     });
 
     // Choose variation
-
     $(document).on('click', '.qqv-option', function () {
+        // Prevent clicking unavailable options
         const $btn = $(this);
+        if ($btn.hasClass('is-unavailable')) return;
+
         const attr = $btn.data('attribute');
         const value = $btn.data('value');
 
@@ -264,13 +346,16 @@ jQuery(function ($) {
 
         $('#qqv-modal .qqv-notice').hide();
 
+        // Re-evaluate availability for ALL options based on new selection
+        updateOptionStates();
+
         const allAttrKeys = [...new Set(
             window.qqvState.variations.flatMap(v => Object.keys(v.attributes))
         )];
 
-        const hasAll = allAttrKeys.every(normKey => {
-            const shortKey = normKey.replace('attribute_', '');
-            return qqvSelectedAttributes[normKey] || qqvSelectedAttributes[shortKey];
+        const hasAll = allAttrKeys.every(nk => {
+            const shortKey = nk.replace('attribute_', '');
+            return qqvSelectedAttributes[nk] || qqvSelectedAttributes[shortKey];
         });
 
         $('.qqv-add-to-cart').prop('disabled', !hasAll);
@@ -286,9 +371,8 @@ jQuery(function ($) {
     function findVariation(variations, selected) {
         return variations.find(v => {
             return Object.entries(selected).every(([key, value]) => {
-                const normKey = key.startsWith('attribute_') ? key : 'attribute_' + key;
-
-                return v.attributes[normKey] === value;
+                const nk = key.startsWith('attribute_') ? key : 'attribute_' + key;
+                return v.attributes[nk] === value;
             });
         });
     }
@@ -297,11 +381,11 @@ jQuery(function ($) {
         const out = {};
 
         Object.entries(selected).forEach(([key, value]) => {
-            const normKey = key.startsWith('attribute_')
+            const nk = key.startsWith('attribute_')
                 ? key
                 : 'attribute_' + key;
 
-            out[normKey] = value;
+            out[nk] = value;
         });
 
         return out;
@@ -329,9 +413,9 @@ jQuery(function ($) {
                 variations.flatMap(v => Object.keys(v.attributes))
             )];
 
-            const hasAll = allAttrKeys.every(normKey => {
-                const shortKey = normKey.replace('attribute_', '');
-                return selected[normKey] || selected[shortKey];
+            const hasAll = allAttrKeys.every(nk => {
+                const shortKey = nk.replace('attribute_', '');
+                return selected[nk] || selected[shortKey];
             });
 
             if (!hasAll) {
