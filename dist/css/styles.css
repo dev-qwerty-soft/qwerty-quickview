@@ -606,12 +606,12 @@
     height: 5.078125vw;
   }
 }
-.qqv-swiper__arrow .qqv-swiper__prev {
+.qqv-swiper__arrow.qqv-swiper__prev {
   right: auto;
   left: 1.3888888889vw;
 }
 @media (max-width: 1024px) {
-  .qqv-swiper__arrow .qqv-swiper__prev {
+  .qqv-swiper__arrow.qqv-swiper__prev {
     left: 1.953125vw;
   }
 }
