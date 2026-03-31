@@ -59,7 +59,6 @@ class Init
                             <div class="qqv-product__price"></div>
                             <div class="qqv-variations"></div>
                             <input type="hidden" class="qqv-variation-id" value="">
-                            <div class="qqv-product__additional"></div>
                             <div class="qqv-notice" style="display:none;"></div>
                             <div class="qqv-product__cart">
                                 <div class="qqv-quantity">

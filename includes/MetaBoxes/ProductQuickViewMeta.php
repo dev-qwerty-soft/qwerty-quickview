@@ -26,20 +26,8 @@ class ProductQuickViewMeta
 
     public function render($post)
     {
-        $additional_text = get_post_meta($post->ID, '_qv_additional_text', true);
         $characteristics  = get_post_meta($post->ID, '_qv_characteristics', true);
         ?>
-
-        <p>
-            <label><strong>Additional text</strong></label><br>
-            <textarea
-                name="qv_additional_text"
-                style="width:100%;height:120px;"
-                placeholder="Enter additional text..."
-            ><?php echo esc_textarea($additional_text); ?></textarea>
-        </p>
-
-        <hr>
 
         <p>
             <label><strong>Characteristics</strong></label><br>
@@ -59,14 +47,6 @@ class ProductQuickViewMeta
 
         if (!current_user_can('edit_post', $post_id)) return;
 
-        // Additional text
-        if (isset($_POST['qv_additional_text'])) {
-            update_post_meta(
-                $post_id,
-                '_qv_additional_text',
-                wp_kses_post($_POST['qv_additional_text'])
-            );
-        }
 
         // Characteristics (plain text)
         if (isset($_POST['qv_characteristics'])) {

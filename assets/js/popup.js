@@ -242,14 +242,6 @@ jQuery(function ($) {
                         $('#qqv-modal .qqv-accordion__item--desc').hide();
                     }
 
-                    // Additional Text
-                    if (response.data.additional_text) {
-                        $('#qqv-modal .qqv-product__additional').html(response.data.additional_text);
-                        $('#qqv-modal .qqv-product__additional').show();
-                    } else {
-                        $('#qqv-modal .qqv-product__additional').hide();
-                    }
-
                     // Characteristics
                     if (response.data.characteristics) {
                         $('#qqv-modal .qqv-product__char').html(response.data.characteristics);

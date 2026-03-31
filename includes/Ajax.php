@@ -108,7 +108,6 @@ class Ajax
             'gallery' => $gallery,
             'description' => apply_filters('the_content', $product->get_description()),
 
-            'additional_text' => get_post_meta($product->get_id(), '_qv_additional_text', true),
             'characteristics' => get_post_meta($product->get_id(), '_qv_characteristics', true),
 
             'attributes' => $attributes,
